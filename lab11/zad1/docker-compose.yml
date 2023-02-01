@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  todo:
+    container_name: todo
+    image: diamol/ch09-todo-list
+    ports:
+      - "8088:80"
+    networks:
+      - todo-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    restart: unless-stoppe
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - ./promotheus_data:/promotheus
+    depends_on:
+      - todo
+    networks:
+      - todo-net
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+
+volumes:
+  prom_data:
+  
+networks:
+  todo-net:

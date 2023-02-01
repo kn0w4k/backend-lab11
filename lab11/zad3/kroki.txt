@@ -1,0 +1,11 @@
+1. docker buildx build -t kun0w4k/multi-arch:linux-arm64 --platform linux-arm64 .
+1. docker buildx build -t kun0w4k/multi-arch:linux-arm64 --platform linux-arm64 .
+1. docker push kun0w4k/multi-arch:linux-arm64
+2. docker buildx build -t kun0w4k/multi-arch:linux-arm --platform linux-arm .
+2. docker push kun0w4k/multi-arch:linux-arm
+3. docker buildx build -t kun0w4k/multi-arch:linux-amd64 --platform linux-amd64 .
+3. docker push kun0w4k/multi-arch:linux-amd64
+4. docker buildx build -t kun0w4k/multi-arch:windows-amd64 --platform windows/amd64 .
+4. wywala error operating system is not supported
+5. docker manifest create kun0w4k/multi-arch kun0w4k/multi-arch:linux-arm64 amd64 arm 
+5. docker manifest push kun0w4k/multi-arch
