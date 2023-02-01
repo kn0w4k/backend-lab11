@@ -1,0 +1,54 @@
+#docker-compose.yml
+version: "3.7"
+
+services:
+  numbers-api:
+    image: diamol/ch14-numbers-api:v5
+    environment:
+      - Broken=false
+      - Logging__LogLevel__Default=Debug
+    networks:
+      - app-net
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: numbers.api.{{".ImageName"}}
+
+  numbers-web:
+    image: diamol/ch14-numbers-web:v5
+    ports:
+      - "8090:80"
+    networks:
+      - app-net
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: numbers.web.{{".ImageName"}}
+
+  fluentd:
+    image: diamol/fluentd
+    environment:
+      FLUENTD_CONF: elasticsearch.conf
+    volumes:
+      - ./conf:/fluentd/etc
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+
+  elasticsearch:
+    image: diamol/elasticsearch
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: diamol/kibana
+    ports:
+      - "5601:5601"
+
+
+networks:
+  app-net:
